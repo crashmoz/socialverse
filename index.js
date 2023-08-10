@@ -9,6 +9,7 @@ const {
   userLeave,
   getRoomUsers,
 } = require("./utils/users");
+const { addRoom, getRooms } = require("./utils/rooms");
 
 const app = express();
 const server = http.createServer(app);
@@ -21,6 +22,18 @@ const botName = "SocialVerse Bot";
 
 // Run on connect with client
 io.on("connection", (socket) => {
+  // index page
+  socket.on("index", () => {
+    const rooms = getRooms();
+
+    socket.emit("fetchRoom", rooms);
+
+    socket.on("addRoom", (val) => {
+      addRoom(val);
+      io.emit("fetchRoom", val);
+    });
+  });
+
   socket.on("joinRoom", ({ username, room }) => {
     const user = userJoin(socket.id, username, room);
 
@@ -34,7 +47,7 @@ io.on("connection", (socket) => {
       .to(user.room)
       .emit(
         "message",
-        formatMessage(botName, `${user.username} has joined the cat`)
+        formatMessage(botName, `<b>${user.username}</b> has joined the chat`)
       );
 
     // Send users and room info
@@ -51,7 +64,7 @@ io.on("connection", (socket) => {
     if (user) {
       io.to(user.room).emit(
         "message",
-        formatMessage(botName, `${user.username} has left the chat`)
+        formatMessage(botName, `<b>${user.username}</b> has left the chat`)
       );
     }
   });

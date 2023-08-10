@@ -40,11 +40,30 @@ chatForm.addEventListener("submit", (e) => {
 // Put message to DOM
 function outputMessage(msg) {
   const div = document.createElement("div");
-  div.classList.add("message");
-  div.innerHTML = `<p class="meta">${msg.username} <span>${msg.time}</span></p>
-  <p class="text">
-    ${msg.text}          
-  </p>`;
+  div.classList.add("wrapper");
+  if (username == msg.username) {
+    div.innerHTML = `
+    <div class="bubble alt">
+      <div class="txt">
+        <p class="name alt">${msg.username}</p>
+        <p class="message">${msg.text}</p>
+        <span class="timestamp">${msg.time}</span>
+      </div>
+      <div class="bubble-arrow alt"></div>
+    </div>
+  `;
+  } else {
+    div.innerHTML = `
+      <div class="bubble">
+        <div class="txt">
+          <p class="name">${msg.username}</p>
+          <p class="message">${msg.text}</p>
+          <span class="timestamp">${msg.time}</span>
+        </div>
+        <div class="bubble-arrow"></div>
+      </div>
+    `;
+  }
   document.querySelector(".chat-messages").appendChild(div);
 }
 
